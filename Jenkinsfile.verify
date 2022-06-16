@@ -1,0 +1,35 @@
+pipeline {
+    agent {
+        docker {
+            label 'fast-lane'
+            image 'storjlabs/ci:latest'
+            alwaysPull true
+            args '-u root:root --cap-add SYS_PTRACE -v "/tmp/gomod":/go/pkg/mod -v "/tmp/npm":/npm --tmpfs "/tmp:exec,mode=777"'
+        }
+    }
+    options {
+        timeout(time: 40, unit: 'MINUTES')
+        skipDefaultCheckout(true)
+    }
+    stages {
+        stage('Checkout') {
+            steps {
+                // Delete any content left over from a previous run.
+                sh "chmod -R 777 ."
+                // Bash requires extglob option to support !(.git) syntax,
+                // and we don't want to delete .git to have faster clones.
+                sh 'bash -O extglob -c "rm -rf !(.git)"'
+
+                checkout scm
+
+                sh 'mkdir -p .build'
+
+            }
+        }
+        stage('Verify') {
+            steps {
+                 sh './lint.sh'
+            }
+        }
+    }
+ }
