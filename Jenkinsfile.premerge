@@ -7,9 +7,6 @@ pipeline {
             args '-u root:root --cap-add SYS_PTRACE -v "/tmp/gomod":/go/pkg/mod -v "/tmp/npm":/npm --tmpfs "/tmp:exec,mode=777"'
         }
     }
-    parameters {
-            string(name: 'GIT_REF', description: 'Branch to build. Eg. refs/changes/82/7782/2')
-    }
     options {
         timeout(time: 40, unit: 'MINUTES')
         skipDefaultCheckout(true)
