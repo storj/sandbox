@@ -28,7 +28,7 @@ pipeline {
         }
         stage('Verify') {
             steps {
-                 sh './lint.sh'
+                 sh './verify.sh'
             }
         }
     }
