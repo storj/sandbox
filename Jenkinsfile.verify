@@ -28,7 +28,9 @@ pipeline {
         }
         stage('Gerrit status') {
             steps {
-               sh './scripts/gerrit-status.sh verify start 0'
+                withCredentials([sshUserPrivateKey(credentialsId: 'gerrit-trigger-ssh', keyFileVariable: 'SSH_KEY', usernameVariable: 'SSH_USER')]) {
+                    sh './scripts/gerrit-status.sh verify start 0'
+                }
             }
         }
         stage('Verify') {
@@ -39,10 +41,14 @@ pipeline {
     }
     post {
                     success {
-                        sh './scripts/gerrit-status.sh verify success +1'
+                        withCredentials([sshUserPrivateKey(credentialsId: 'gerrit-trigger-ssh', keyFileVariable: 'SSH_KEY', usernameVariable: 'SSH_USER')]) {
+                            sh './scripts/gerrit-status.sh verify success +1'
+                        }
                     }
                     failure {
-                        sh './scripts/gerrit-status.sh verify failure -1'
+                        withCredentials([sshUserPrivateKey(credentialsId: 'gerrit-trigger-ssh', keyFileVariable: 'SSH_KEY', usernameVariable: 'SSH_USER')]) {
+                            sh './scripts/gerrit-status.sh verify failure -1'
+                        }
                     }
 
     }
