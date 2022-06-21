@@ -29,7 +29,7 @@ pipeline {
         stage('Gerrit status') {
             steps {
                 withCredentials([sshUserPrivateKey(credentialsId: 'gerrit-trigger-ssh', keyFileVariable: 'SSH_KEY', usernameVariable: 'SSH_USER')]) {
-                    sh './scripts/gerrit-status.sh verify pre-merge +1'
+                    sh './scripts/gerrit-status.sh pre-merge start +1'
                 }
             }
         }
