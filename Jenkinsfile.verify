@@ -28,7 +28,7 @@ pipeline {
         }
         stage('Gerrit status') {
             steps {
-               sh './script/gerrit-status.sh verify start 0'
+               sh './scripts/gerrit-status.sh verify start 0'
             }
         }
         stage('Verify') {
@@ -39,10 +39,10 @@ pipeline {
     }
     post {
                     success {
-                        sh './script/gerrit-status.sh verify success +1'
+                        sh './scripts/gerrit-status.sh verify success +1'
                     }
                     failure {
-                        sh './script/gerrit-status.sh verify failure -1'
+                        sh './scripts/gerrit-status.sh verify failure -1'
                     }
 
     }
