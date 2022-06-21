@@ -27,21 +27,23 @@ pipeline {
             }
         }
         stage('Gerrit status') {
-            sh './script/gerrit-status.sh verify start 0'
+            steps {
+               sh './script/gerrit-status.sh verify start 0'
+            }
         }
         stage('Verify') {
             steps {
                  sh './verify.sh'
             }
         }
-         post {
-                success {
-                    sh './script/gerrit-status.sh verify success +1'
-                }
-                failure {
-                    sh './script/gerrit-status.sh verify failure -1'
-                }
+    }
+    post {
+                    success {
+                        sh './script/gerrit-status.sh verify success +1'
+                    }
+                    failure {
+                        sh './script/gerrit-status.sh verify failure -1'
+                    }
 
-            }
     }
  }
