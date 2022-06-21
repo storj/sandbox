@@ -26,10 +26,30 @@ pipeline {
 
             }
         }
-        stage('Verify') {
+        stage('Gerrit status') {
+            steps {
+                withCredentials([sshUserPrivateKey(credentialsId: 'gerrit-trigger-ssh', keyFileVariable: 'SSH_KEY', usernameVariable: 'SSH_USER')]) {
+                    sh './scripts/gerrit-status.sh verify pre-merge +1'
+                }
+            }
+        }
+        stage('Pre-Merge') {
             steps {
                  sh './premerge.sh'
             }
         }
+    }
+    post {
+                    success {
+                        withCredentials([sshUserPrivateKey(credentialsId: 'gerrit-trigger-ssh', keyFileVariable: 'SSH_KEY', usernameVariable: 'SSH_USER')]) {
+                            sh './scripts/gerrit-status.sh pre-merge success +2'
+                        }
+                    }
+                    failure {
+                        withCredentials([sshUserPrivateKey(credentialsId: 'gerrit-trigger-ssh', keyFileVariable: 'SSH_KEY', usernameVariable: 'SSH_USER')]) {
+                            sh './scripts/gerrit-status.sh pre-merge failure -2'
+                        }
+                    }
+
     }
  }
