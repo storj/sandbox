@@ -23,7 +23,12 @@ pipeline {
                 checkout scm
 
                 sh 'mkdir -p .build'
-
+                script {
+                   webChanged = sh(
+                      returnStdout: true,
+                      script: 'git diff --name-only  | grep web | wc  -l'
+                   )
+                }
             }
         }
         stage('Gerrit status') {
@@ -36,6 +41,15 @@ pipeline {
         stage('Verify') {
             steps {
                  sh './verify.sh'
+            }
+        }
+        stage('Web') {
+            steps {
+               script {
+                  if (webChanged != '0') {
+                     sh './web.sh'
+                  }
+               }
             }
         }
     }
